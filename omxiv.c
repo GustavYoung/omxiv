@@ -15,6 +15,7 @@
 #include "omx_image.h"
 #include "soft_image.h"
 #include "bcm_host.h"
+#include "help.h"
 
 #ifndef VERSION
 #define VERSION "UNKNOWN"
@@ -92,14 +93,10 @@ static unsigned long getCurrentTimeMs(){
 
 static int imageFilter(const struct dirent *entry){
 	char* ext = strrchr(entry->d_name, '.');
-	if(ext!=NULL && (strcmp(ext, ".jpg") == 0 || strcmp(ext, ".JPG") == 0 ||
-			strcmp(ext, ".jpeg") == 0 || strcmp(ext, ".JPEG") == 0 ||
-			strcmp(ext, ".jpe") == 0 || strcmp(ext, ".JPE") == 0 ||
-			strcmp(ext, ".png") == 0 || strcmp(ext, ".PNG") == 0 ||
-			strcmp(ext, ".bmp") == 0 || strcmp(ext, ".BMP") == 0 ||
-			strcmp(ext, ".gif") == 0 || strcmp(ext, ".GIF") == 0 ||
-			strcmp(ext, ".tif") == 0 || strcmp(ext, ".TIF") == 0 ||
-			strcmp(ext, ".tiff") == 0 || strcmp(ext, ".TIFF") == 0))
+	if(ext!=NULL && (strcasecmp(ext, ".jpg") == 0 || strcasecmp(ext, ".jpeg") == 0 
+			|| strcasecmp(ext, ".jpe") == 0 || strcasecmp(ext, ".png") == 0
+			|| strcasecmp(ext, ".bmp") == 0 || strcasecmp(ext, ".gif") == 0 
+			|| strcasecmp(ext, ".tif") == 0 || strcasecmp(ext, ".tiff") == 0))
 		return 1;
 	else
 		return 0;
@@ -135,42 +132,6 @@ static int getImageFilesInDir(char ***list, const char* path){
 		free(namelist);
 	}
 	return imageNum;
-}
-
-
-void printUsage(const char *progr){
-	printf("\n");
-	printf("USAGE: %s [OPTIONS] image1 [image2] ...\n", progr);
-	printf("       %s [OPTIONS] directory\n\n", progr);
-	printf("    Without any input it will cycle through all\n");
-	printf("    supported images in the current directory.\n\n");
-	printf("OPTIONS:\n\n");
-	printf("    -h  --help                   Print this help\n");
-	printf("    -v  --version                Show version info\n");
-	printf("    -t                  n        Time in s between 2 images in a slide show\n");
-	printf("    -b  --blank                  Set background to black\n");
-	printf("    -T  --transition   type      type: none(default), blend\n");
-	printf("        --duration      n        Transition duration in ms\n");
-	printf("        --win     'x1 y1 x2 y2'  Position of image window\n");
-	printf("        --win      x1,y1,x2,y2   Position of image window\n");
-	printf("    -m  --mirror                 Mirror image\n");
-	printf("    -a  --aspect       type      type: letterbox(default), fill, center\n");
-	printf("    -o  --orientation   n        Orientation of the image (0, 90, 180, 270)\n");
-	printf("    -l  --layer         n        Render layer number\n");
-	printf("    -d  --display       n        Display number\n");
-	printf("    -i  --info                   Print some additional infos\n");
-	printf("    -k  --no-keys                Disable keyboard input\n");
-	printf("    -s  --soft                   Force software decoding\n");
-	printf("        --ignore-exif            Ignore exif orientation\n\n");
-	printf("KEY CONFIGURATION:\n\n");
-	printf("    ESC, q  :   Quit\n");
-	printf("    LEFT    :   Previous image\n");
-	printf("    RIGHT   :   Next image\n");
-	printf("    UP      :   Rotate right\n");
-	printf("    DOWN    :   Rotate left\n");
-	printf("    m       :   Mirror image\n");
-	printf("    p       :   Pause slide show\n");
-	printf("\n");
 }
 
 // http://stackoverflow.com/a/912796
@@ -421,7 +382,7 @@ int main(int argc, char *argv[]){
 		
 		switch(opt){
 			case 'h':
-				printUsage(argv[0]);
+				printUsage();
 				return 0;
 			case 'v':
 				printVersion();
